@@ -80,7 +80,7 @@ Este servidor no incluye gráficos en tarjeta, lo que lo hace ideal para aplicac
     <button class="btn" id="checkout-btn">Finalizar compra</button>
 </div>
 
-<!-- === Modal del formulario de compra === -->
+
 <div class="checkout-modal" id="checkout-modal">
     <div class="checkout-form">
         <h3>Finalizar compra</h3>
@@ -99,7 +99,7 @@ Este servidor no incluye gráficos en tarjeta, lo que lo hace ideal para aplicac
         <div class="success-message" id="success-message"></div>
     </div>
 </div>
-<!-- Modal de seguimiento -->
+
 <div class="tracking-modal" id="tracking-modal">
     <div class="tracking-box">
         <h3>📦 Seguimiento de tu pedido</h3>
@@ -120,7 +120,7 @@ Este servidor no incluye gráficos en tarjeta, lo que lo hace ideal para aplicac
 
 
 
-    // === Lógica del carrito ===
+    
     const cartBtn = document.getElementById('cart-btn');
     const cartContainer = document.getElementById('cart-container');
     const closeCart = document.getElementById('close-cart');
@@ -143,7 +143,7 @@ Este servidor no incluye gráficos en tarjeta, lo que lo hace ideal para aplicac
         cartContainer.classList.remove('active');
     });
 
-    // Agregar producto
+   
     addToCartBtn.addEventListener('click', () => {
         const product = {
             id: 1,
@@ -162,7 +162,7 @@ Este servidor no incluye gráficos en tarjeta, lo que lo hace ideal para aplicac
         updateCart();
     });
 
-    // Actualizar carrito
+  
     function updateCart() {
         cartItems.innerHTML = '';
         let total = 0;
@@ -183,13 +183,13 @@ Este servidor no incluye gráficos en tarjeta, lo que lo hace ideal para aplicac
         localStorage.setItem('cart', JSON.stringify(cart));
     }
 
-    // Eliminar producto
+   
     window.removeFromCart = function(id) {
         cart = cart.filter(item => item.id !== id);
         updateCart();
     };
 
-    // Mostrar formulario de checkout
+    
     checkoutBtn.addEventListener('click', () => {
         if (cart.length === 0) {
             alert('Tu carrito está vacío.');
@@ -198,13 +198,12 @@ Este servidor no incluye gráficos en tarjeta, lo que lo hace ideal para aplicac
         checkoutModal.classList.add('active');
     });
 
-    // Cerrar modal si se hace clic fuera del formulario
+    
     checkoutModal.addEventListener('click', e => {
         if (e.target === checkoutModal) checkoutModal.classList.remove('active');
     });
 
-    // Confirmar compra (sin Firebase)
- // Confirmar compra (con seguimiento y número de guía)
+ 
 purchaseForm.addEventListener('submit', e => {
     e.preventDefault();
     const nombre = document.getElementById('nombre').value.trim();
@@ -221,12 +220,12 @@ purchaseForm.addEventListener('submit', e => {
             🚚 Número de seguimiento: <b>${trackingNumber}</b>
         `;
 
-        // Mostrar modal de seguimiento
+       
         document.getElementById("tracking-modal").classList.add("active");
         document.getElementById("tracking-number-text").innerHTML =
             `Tu número de seguimiento es: <b>${trackingNumber}</b>`;
 
-        // Simular estados del envío
+       
         const steps = document.querySelectorAll(".tracking-steps .step");
         
         let step = 0;
@@ -236,12 +235,12 @@ purchaseForm.addEventListener('submit', e => {
         setTimeout(() => { steps[2].classList.add("active"); }, 4000);
         setTimeout(() => { steps[3].classList.add("active"); }, 6000);
 
-        // Vaciar carrito
+     
         cart = [];
         localStorage.removeItem('cart');
         updateCart();
 
-        // Limpiar form después
+       
         setTimeout(() => {
             checkoutModal.classList.remove('active');
             purchaseForm.reset();
@@ -253,9 +252,9 @@ document.getElementById("close-tracking").addEventListener("click", () => {
 });
 
 
-    // Inicializar al cargar
     updateCart();
 </script>
 
 </body>
 </html>
+
