@@ -64,7 +64,7 @@
     </div>
 </section>
 
-<!-- === Carrito flotante === -->
+
 <div class="cart-container" id="cart-container">
     <div class="cart-header">
         <h3>🛍️ Carrito</h3>
@@ -75,7 +75,7 @@
     <button class="btn" id="checkout-btn">Finalizar compra</button>
 </div>
 
-<!-- === Modal del formulario de compra === -->
+
 <div class="checkout-modal" id="checkout-modal">
     <div class="checkout-form">
         <h3>Finalizar compra</h3>
@@ -133,7 +133,7 @@
 
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    // Mostrar / ocultar carrito
+   
     cartBtn.addEventListener('click', () => {
         cartContainer.classList.toggle('active');
     });
@@ -257,3 +257,4 @@ document.getElementById("close-tracking").addEventListener("click", () => {
 
 </body>
 </html>
+
