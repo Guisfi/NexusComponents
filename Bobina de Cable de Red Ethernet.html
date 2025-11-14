@@ -9,21 +9,26 @@
 </head>
 <body>
      <header>
-        <nav class="navbar section-container">
-            <a href="#Inicio" class="nav-logo">
-                <h2 class="logo-text">
-                    <img src="img/logo.jpg" alt="Logo Nexus Components">
-                    Nexus Components
-                </h2>
-            </a>
-            
-            <ul class="nav-menu">
-                <li class="nav-item"><a href="index.html" class="nav-link">Inicio</a></li>
-                <li class="nav-item"><a href="#" class="nav-link" onclick="window.history.back()">Regresaro</a></li>
-                
-            </ul>
-        </nav>
-    </header>
+    <nav class="navbar section-container">
+        <a href="#Inicio" class="nav-logo">
+            <h2 class="logo-text">
+                <img src="img/logo.jpg" alt="Logo Nexus Components">
+                Nexus Components
+            </h2>
+        </a>
+
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="index.html" class="nav-link">Inicio</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" onclick="window.history.back()">Regresar</a></li>
+            <li class="nav-item">
+                <a href="#" class="nav-link cart-icon" id="cart-btn">🛒 
+                    <span class="cart-count" id="cart-count">0</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
 
     <section class="detalle-producto-seccion" id="ArduinoMega">
     <div class="section-container detalle-container">
@@ -58,7 +63,7 @@ Garantía del vendedor:
                     <li>Conductor: 100% cobre o aluminio recubierto de cobre (CCA)</li>
                 </ul>
             </div>
-            
+            <button class="btn" id="add-to-cart">Agregar al carrito</button>
             <a href="contizacio.html" class="detalle-boton-comprar">
                 Solicitar Cotización
             </a>
@@ -66,6 +71,192 @@ Garantía del vendedor:
         </div>
     </div>
 </section>
+
+<div class="cart-container" id="cart-container">
+    <div class="cart-header">
+        <h3>🛍️ Carrito</h3>
+        <button class="btn" id="close-cart">Cerrar</button>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+    <p class="cart-total" id="cart-total">Total: $0</p>
+    <button class="btn" id="checkout-btn">Finalizar compra</button>
+</div>
+
+
+<div class="checkout-modal" id="checkout-modal">
+    <div class="checkout-form">
+        <h3>Finalizar compra</h3>
+        <form id="purchase-form">
+            <label>Nombre completo:</label>
+            <input type="text" id="nombre" required>
+
+            <label>Correo electrónico:</label>
+            <input type="email" id="correo" required>
+
+            <label>Dirección de envío:</label>
+            <textarea id="direccion" required></textarea>
+
+            <button type="submit" class="btn">Confirmar pedido</button>
+        </form>
+        <div class="success-message" id="success-message"></div>
+    </div>
+</div>
+<!-- Modal de seguimiento -->
+<div class="tracking-modal" id="tracking-modal">
+    <div class="tracking-box">
+        <h3>📦 Seguimiento de tu pedido</h3>
+        <p id="tracking-number-text"></p>
+
+        <div class="tracking-steps">
+            <div class="step active">Pedido recibido</div>
+            <div class="step">Preparando paquete</div>
+            <div class="step">En tránsito</div>
+            <div class="step">Entregado</div>
+        </div>
+
+        <button class="btn" id="close-tracking">Cerrar</button>
+    </div>
+</div>
+<script>
+
+
+
+
+  
+    const cartBtn = document.getElementById('cart-btn');
+    const cartContainer = document.getElementById('cart-container');
+    const closeCart = document.getElementById('close-cart');
+    const addToCartBtn = document.getElementById('add-to-cart');
+    const cartItems = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
+    const cartCount = document.getElementById('cart-count');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const checkoutModal = document.getElementById('checkout-modal');
+    const purchaseForm = document.getElementById('purchase-form');
+    const successMessage = document.getElementById('success-message');
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    
+    cartBtn.addEventListener('click', () => {
+        cartContainer.classList.toggle('active');
+    });
+    closeCart.addEventListener('click', () => {
+        cartContainer.classList.remove('active');
+    });
+
+    // Agregar producto
+    addToCartBtn.addEventListener('click', () => {
+        const product = {
+            id: 1,
+            nombre: "Bobina de Cable de Red Ethernet CAT6",
+            precio: 4961
+        };
+
+        const existing = cart.find(item => item.id === product.id);
+        if (existing) {
+            existing.cantidad++;
+        } else {
+            product.cantidad = 1;
+            cart.push(product);
+        }
+
+        updateCart();
+    });
+
+   
+    function updateCart() {
+        cartItems.innerHTML = '';
+        let total = 0;
+
+        cart.forEach(item => {
+            total += item.precio * item.cantidad;
+            const div = document.createElement('div');
+            div.classList.add('cart-item');
+            div.innerHTML = `
+                <span>${item.nombre} x${item.cantidad}</span>
+                <button class="btn" onclick="removeFromCart(${item.id})">❌</button>
+            `;
+            cartItems.appendChild(div);
+        });
+
+        cartTotal.textContent = `Total: $${total}`;
+        cartCount.textContent = cart.reduce((acc, item) => acc + item.cantidad, 0);
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+   
+    window.removeFromCart = function(id) {
+        cart = cart.filter(item => item.id !== id);
+        updateCart();
+    };
+
+   
+    checkoutBtn.addEventListener('click', () => {
+        if (cart.length === 0) {
+            alert('Tu carrito está vacío.');
+            return;
+        }
+        checkoutModal.classList.add('active');
+    });
+
+    
+    checkoutModal.addEventListener('click', e => {
+        if (e.target === checkoutModal) checkoutModal.classList.remove('active');
+    });
+
+
+purchaseForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const nombre = document.getElementById('nombre').value.trim();
+    const correo = document.getElementById('correo').value.trim();
+    const direccion = document.getElementById('direccion').value.trim();
+
+    if (nombre && correo && direccion) {
+
+        // Generar número de seguimiento
+        const trackingNumber = "NX-" + Math.floor(Math.random() * 90000000 + 10000000);
+
+        successMessage.innerHTML = `
+            ✅ Gracias, <b>${nombre}</b>. Tu pedido fue registrado correctamente.<br>
+            🚚 Número de seguimiento: <b>${trackingNumber}</b>
+        `;
+
+       
+        document.getElementById("tracking-modal").classList.add("active");
+        document.getElementById("tracking-number-text").innerHTML =
+            `Tu número de seguimiento es: <b>${trackingNumber}</b>`;
+
+      
+        const steps = document.querySelectorAll(".tracking-steps .step");
+        
+        let step = 0;
+        steps[step].classList.add("active");
+
+        setTimeout(() => { steps[1].classList.add("active"); }, 2000);
+        setTimeout(() => { steps[2].classList.add("active"); }, 4000);
+        setTimeout(() => { steps[3].classList.add("active"); }, 6000);
+
+      
+        cart = [];
+        localStorage.removeItem('cart');
+        updateCart();
+
+        
+        setTimeout(() => {
+            checkoutModal.classList.remove('active');
+            purchaseForm.reset();
+        }, 3000);
+    }
+});
+document.getElementById("close-tracking").addEventListener("click", () => {
+    document.getElementById("tracking-modal").classList.remove("active");
+});
+
+
+    
+    updateCart();
+</script>
 
 </body>
 </html>
